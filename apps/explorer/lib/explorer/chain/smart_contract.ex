@@ -193,6 +193,7 @@ defmodule Explorer.Chain.SmartContract do
   * `abi` - The [JSON ABI specification](https://solidity.readthedocs.io/en/develop/abi-spec.html#json) for this
     contract.
   * `verified_via_sourcify` - whether contract verified through Sourcify utility or not.
+  * `partial_verified` - whether contract verified using partial matched source code or not.
   """
 
   @type t :: %Explorer.Chain.SmartContract{
@@ -204,7 +205,8 @@ defmodule Explorer.Chain.SmartContract do
           evm_version: String.t() | nil,
           optimization_runs: non_neg_integer() | nil,
           abi: [function_description],
-          verified_via_sourcify: boolean | nil
+          verified_via_sourcify: boolean | nil,
+          partial_verified: boolean | nil
         }
 
   schema "smart_contracts" do
@@ -218,6 +220,7 @@ defmodule Explorer.Chain.SmartContract do
     embeds_many(:external_libraries, ExternalLibrary)
     field(:abi, {:array, :map})
     field(:verified_via_sourcify, :boolean)
+    field(:partial_verified, :boolean)
 
     has_many(
       :decompiled_smart_contracts,

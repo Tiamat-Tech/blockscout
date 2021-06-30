@@ -3706,6 +3706,23 @@ defmodule Explorer.Chain do
     end
   end
 
+  def ssmart_contract_full_verified?(address_hash_str) do 
+    case string_to_address_hash(address_hash_str) do
+      {:ok, address_hash} ->
+        query =
+          from(
+            smart_contract in SmartContract,
+            where: smart_contract.address_hash == ^address_hash
+          )
+        result = Repo.one(query)
+
+        if result, do: !result.partial
+
+      _ ->
+        false
+    end
+  end
+
   def smart_contract_verified?(address_hash_str) do
     case string_to_address_hash(address_hash_str) do
       {:ok, address_hash} ->
