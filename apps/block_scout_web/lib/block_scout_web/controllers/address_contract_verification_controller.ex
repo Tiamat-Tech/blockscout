@@ -10,7 +10,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
   alias Explorer.ThirdPartyIntegrations.Sourcify
 
   def new(conn, %{"address_id" => address_hash_string}) do
-    if Chain.smart_contract_verified?(address_hash_string) do
+    if Chain.smart_contract_full_verified?(address_hash_string) do
       redirect(conn, to: address_path(conn, :show, address_hash_string))
     else
       changeset =
@@ -65,7 +65,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
     json_file = json_files |> Enum.at(0)
 
     if json_file do
-      if Chain.smart_contract_verified?(address_hash_string) do
+      if Chain.smart_contract_full_verified?(address_hash_string) do
         EventsPublisher.broadcast(
           prepare_verification_error(
             "This contract already verified in Blockscout.",

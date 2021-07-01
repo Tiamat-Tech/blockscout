@@ -3706,7 +3706,7 @@ defmodule Explorer.Chain do
     end
   end
 
-  def ssmart_contract_full_verified?(address_hash_str) do 
+  def smart_contract_full_verified?(address_hash_str) do 
     case string_to_address_hash(address_hash_str) do
       {:ok, address_hash} ->
         query =

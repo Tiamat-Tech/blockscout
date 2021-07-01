@@ -53,7 +53,7 @@ defmodule BlockScoutWeb.API.RPC.ContractController do
         []
       end
 
-    if Chain.smart_contract_verified?(address_hash) do
+    if Chain.smart_contract_full_verified?(address_hash) do
       render(conn, :error, error: "Smart-contract already verified.")
     else
       case Sourcify.check_by_address(address_hash) do
