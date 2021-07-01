@@ -123,7 +123,7 @@ defmodule BlockScoutWeb.AddressContractView do
     checksummed_hash = Address.checksum(address_hash)
     chain_id = Application.get_env(:explorer, Explorer.ThirdPartyIntegrations.Sourcify)[:chain_id]
     repo_url = Application.get_env(:explorer, Explorer.ThirdPartyIntegrations.Sourcify)[:repo_url]
-    match = if partial_match, do: "/partial_match/", else: "/full_match/" end
+    match = if partial_match, do: "/partial_match/", else: "/full_match/"
     repo_url <> match <> chain_id <> "/" <> checksummed_hash <> "/"
   end
 end 
