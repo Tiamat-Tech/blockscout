@@ -91,7 +91,8 @@ defmodule Explorer.SmartContract.Publisher do
       external_libraries: prepared_external_libraries,
       secondary_sources: params["secondary_sources"],
       abi: abi,
-      verified_via_sourcify: params["verified_via_sourcify"]
+      verified_via_sourcify: params["verified_via_sourcify"],
+      partial_verified: params["partial_verified"]
     }
   end
 

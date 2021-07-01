@@ -160,8 +160,8 @@ defmodule Explorer.ThirdPartyIntegrations.Sourcify do
 
       %{"status" => status, "files" => metadata} ->
         {:ok, status, metadata}
-      
-      _ -> 
+
+      _ ->
         {:error, "Unknown Error"}
     end
   end

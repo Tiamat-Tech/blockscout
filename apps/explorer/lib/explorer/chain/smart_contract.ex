@@ -255,7 +255,8 @@ defmodule Explorer.Chain.SmartContract do
       :constructor_arguments,
       :evm_version,
       :optimization_runs,
-      :verified_via_sourcify
+      :verified_via_sourcify,
+      :partial_verified
     ])
     |> validate_required([:name, :compiler_version, :optimization, :contract_source_code, :abi, :address_hash])
     |> unique_constraint(:address_hash)
@@ -274,7 +275,8 @@ defmodule Explorer.Chain.SmartContract do
         :evm_version,
         :optimization_runs,
         :constructor_arguments,
-        :verified_via_sourcify
+        :verified_via_sourcify,
+        :partial_verified
       ])
       |> validate_required([:name, :compiler_version, :optimization, :address_hash])
 

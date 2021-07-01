@@ -128,15 +128,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
   def get_metadata_and_publish(address_hash_string, conn) do
     case Sourcify.get_metadata(address_hash_string) do
       {:ok, verification_metadata} ->
-        %{"params_to_publish" => params_to_publish, "abi" => abi, "secondary_sources" => secondary_sources} =
-          parse_params_from_sourcify(address_hash_string, verification_metadata)
-
-        ContractController.publish(conn, %{
-          "addressHash" => address_hash_string,
-          "params" => params_to_publish,
-          "abi" => abi,
-          "secondarySources" => secondary_sources
-        })
+        proccess_metadata_add_publish(address_hash_string, verification_metadata, false)
 
       {:error, %{"error" => error}} ->
         EventsPublisher.broadcast(
@@ -144,6 +136,19 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
           :on_demand
         )
     end
+  end
+
+  defp proccess_metadata_add_publish(address_hash_string, verification_metadata, is_partial) do
+    %{"params_to_publish" => params_to_publish, "abi" => abi, "secondary_sources" => secondary_sources} =
+      parse_params_from_sourcify(address_hash_string, verification_metadata)
+
+    ContractController.publish(conn, %{
+      "addressHash" => address_hash_string,
+      "params" => params_to_publish,
+      "abi" => abi,
+      "secondarySources" => secondary_sources,
+      "partial_verified" => is_partial
+    })
   end
 
   def prepare_files_array(files) do
@@ -254,6 +259,33 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
     case Integer.parse(runs) do
       {integer, ""} -> integer
       _ -> 200
+    end
+  end
+
+  def check_and_verify(address_hash) do
+    if !Chain.smart_contract_full_verified?(address_hash) do
+      if Chain.smart_contract_verified?(address_hash) do
+        case Sourcify.check_by_address(address_hash) do
+          {:ok, _verified_status} ->
+            get_metadata_and_publish(address_hash, conn)
+
+          _ ->
+            {:error, :not_verified}
+        end
+      else
+        case Sourcify.check_by_address_any(address_hash) do
+          {:ok, "full", metadata} ->
+            proccess_metadata_add_publish(address_hash, metadata, false)
+
+          {:ok, "partial", metadata} ->
+            proccess_metadata_add_publish(address_hash, metadata, true)
+
+          _ ->
+            {:error, :not_verified}
+        end
+      end
+    else
+      {:ok, :already_full_verified}
     end
   end
 end
