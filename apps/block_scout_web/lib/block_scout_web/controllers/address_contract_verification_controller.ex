@@ -125,6 +125,16 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
     end
   end
 
+  def get_metadata_and_publish(address_hash_string, nil) do
+    case Sourcify.get_metadata(address_hash_string) do
+      {:ok, verification_metadata} ->
+        proccess_metadata_add_publish(address_hash_string, verification_metadata, false)
+
+      {:error, %{"error" => error}} ->
+        {:error, error: error}
+    end
+  end
+
   def get_metadata_and_publish(address_hash_string, conn) do
     case Sourcify.get_metadata(address_hash_string) do
       {:ok, verification_metadata} ->
@@ -267,7 +277,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
       if Chain.smart_contract_verified?(address_hash) do
         case Sourcify.check_by_address(address_hash) do
           {:ok, _verified_status} ->
-            get_metadata_and_publish(address_hash, conn)
+            get_metadata_and_publish(address_hash, nil)
 
           _ ->
             {:error, :not_verified}
