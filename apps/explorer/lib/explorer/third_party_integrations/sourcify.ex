@@ -14,7 +14,7 @@ defmodule Explorer.ThirdPartyIntegrations.Sourcify do
   end
 
   def check_by_address_any(address_hash_string) do
-    get_metadata_full_url = get_metadata_any_url <> "/" <> address_hash_string
+    get_metadata_full_url = get_metadata_any_url() <> "/" <> address_hash_string
     http_get_request(get_metadata_full_url, [])
   end
 
