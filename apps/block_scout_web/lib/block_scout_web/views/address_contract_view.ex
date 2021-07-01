@@ -126,4 +126,4 @@ defmodule BlockScoutWeb.AddressContractView do
     match = if partial_match, do: "/partial_match/", else: "/full_match/"
     repo_url <> match <> chain_id <> "/" <> checksummed_hash <> "/"
   end
-end 
+end
