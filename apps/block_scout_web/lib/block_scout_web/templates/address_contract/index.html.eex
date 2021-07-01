@@ -39,10 +39,10 @@
             </div>
           <% end %>
         <% end %>
-        <%= if @address.smart_contract.verified_via_sourcify %>
-           <a data-test="external_url" href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
-              View contract in Sourcify repository <span class="external-token-icon"><%= render BlockScoutWeb.IconsView, "_external_link.html" %></span>
-            </a>
+        <%= if @address.smart_contract.verified_via_sourcify do %>
+          <a data-test="external_url" href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
+            View contract in Sourcify repository <span class="external-token-icon"><%= render BlockScoutWeb.IconsView, "_external_link.html" %></span>
+          </a>
         <% end %>
         <div class="mb-4">
           <dl class="row">
