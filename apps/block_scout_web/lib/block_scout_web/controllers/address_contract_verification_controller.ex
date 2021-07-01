@@ -151,13 +151,12 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
   defp proccess_metadata_add_publish(address_hash_string, verification_metadata, is_partial, conn \\ nil) do
     %{"params_to_publish" => params_to_publish, "abi" => abi, "secondary_sources" => secondary_sources} =
       parse_params_from_sourcify(address_hash_string, verification_metadata)
-
+    params_to_publish = Map.put(params_to_publish, "partial_verified", is_partial)
     ContractController.publish(conn, %{
       "addressHash" => address_hash_string,
       "params" => params_to_publish,
       "abi" => abi,
-      "secondarySources" => secondary_sources,
-      "partial_verified" => is_partial
+      "secondarySources" => secondary_sources
     })
   end
 

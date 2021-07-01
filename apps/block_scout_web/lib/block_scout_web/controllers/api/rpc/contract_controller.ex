@@ -214,8 +214,8 @@ defmodule BlockScoutWeb.API.RPC.ContractController do
     end
   end
 
-  def publish(nil, %{"addressHash" => address_hash} = input) do
-    result = publish_without_broadcast(input)
+  def publish(nil, %{"addressHash" => _address_hash} = input) do
+    publish_without_broadcast(input)
   end
 
   def publish(conn, %{"addressHash" => address_hash} = input) do
