@@ -3706,22 +3706,30 @@ defmodule Explorer.Chain do
     end
   end
 
-  def smart_contract_full_verified?(address_hash_str) do
-    case string_to_address_hash(address_hash_str) do
+  def smart_contract_full_verified?(address) when is_binary(address) do
+    case string_to_address_hash(address) do
       {:ok, address_hash} ->
-        query =
-          from(
-            smart_contract in SmartContract,
-            where: smart_contract.address_hash == ^address_hash
-          )
-
-        result = Repo.one(query)
-
-        if result, do: !result.partial
+        check_full_verified(address_hash)
 
       _ ->
         false
     end
+  end
+
+  def smart_contract_full_verified?(address) do
+    check_full_verified(address)
+  end
+
+  defp check_full_verified(address_hash) do
+    query =
+      from(
+        smart_contract in SmartContract,
+        where: smart_contract.address_hash == ^address_hash
+      )
+
+    result = Repo.one(query)
+
+    if result, do: !result.partial
   end
 
   def smart_contract_verified?(address_hash_str) do
