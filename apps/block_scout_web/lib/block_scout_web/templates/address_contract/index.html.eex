@@ -38,7 +38,7 @@
           <% end %>
         <% end %>
         <%= if @address.smart_contract.verified_via_sourcify do %>
-          <a data-test="external_url" fr=<%= full_verified %> href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
+          <a data-test="external_url" href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
             View contract in Sourcify repository <span class="external-token-icon"><%= render BlockScoutWeb.IconsView, "_external_link.html" %></span>
           </a>
         <% end %>
@@ -139,7 +139,7 @@
               <pre class="pre-wrap pre-scrollable"><code class="nohighlight"><%= transaction_init %></code></pre>
             </div>
           <% {:ok, contract_code} -> %>
-            <%= if smart_contract_verified do %>
+            <%= if full_verified do %>
               <div class="d-flex justify-content-between align-items-baseline">
                 <h3><%= gettext "Contract Byte Code" %></h3>
                 <button type="button" class="btn-line" style="float: left;" id="button" data-clipboard-text="<%= contract_code %>" aria-label="copy contract creation code">
