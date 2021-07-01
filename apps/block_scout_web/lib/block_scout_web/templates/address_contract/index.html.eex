@@ -31,12 +31,11 @@
         <%= if @address.smart_contract.partial_verified && smart_contract_verified do %>
           <div class="mb-4">
             <i style="color: #f7b32b;" class="fa fa-info-circle"></i><span> <%= gettext("This contract has been partially verified via Sourcify.") %>
-          </div>
         <% else %>
           <%= if @address.smart_contract.verified_via_sourcify && smart_contract_verified do %>
             <div class="mb-4">
               <i style="color: #f7b32b;" class="fa fa-info-circle"></i><span> <%= gettext("This contract has been verified via Sourcify.") %>
-            </div>
+            
           <% end %>
         <% end %>
         <%= if @address.smart_contract.verified_via_sourcify do %>
@@ -44,6 +43,7 @@
             View contract in Sourcify repository <span class="external-token-icon"><%= render BlockScoutWeb.IconsView, "_external_link.html" %></span>
           </a>
         <% end %>
+        </div>
         <div class="mb-4">
           <dl class="row">
             <dt class="col-md-2 text-muted"><%= gettext "Contract name:" %></dt>
