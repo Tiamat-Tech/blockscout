@@ -5,7 +5,7 @@
 <% additional_sources_from_twin = Chain.get_address_verified_twin_contract(@address.hash).additional_sources %>
 <% full_verified = Chain.smart_contract_full_verified?(@address.hash)%>
 <% additional_sources = if smart_contract_verified, do: @address.smart_contract_additional_sources, else: additional_sources_from_twin %>
-
+<% full_verified %>
 <section class="container">
   <% is_proxy = BlockScoutWeb.AddressView.smart_contract_is_proxy?(@address) %>
 
@@ -36,7 +36,6 @@
           <%= if @address.smart_contract.verified_via_sourcify && smart_contract_verified do %>
             <div class="mb-4">
               <i style="color: #f7b32b;" class="fa fa-info-circle"></i><span> <%= gettext("This contract has been verified via Sourcify.") %>
-            
           <% end %>
         <% end %>
         <%= if @address.smart_contract.verified_via_sourcify do %>
