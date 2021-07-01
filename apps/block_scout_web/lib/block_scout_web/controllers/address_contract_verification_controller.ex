@@ -128,7 +128,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
   def get_metadata_and_publish(address_hash_string, conn) do
     case Sourcify.get_metadata(address_hash_string) do
       {:ok, verification_metadata} ->
-        proccess_metadata_add_publish(address_hash_string, verification_metadata, false)
+        proccess_metadata_add_publish(address_hash_string, verification_metadata, false, conn)
 
       {:error, %{"error" => error}} ->
         EventsPublisher.broadcast(
@@ -138,7 +138,7 @@ defmodule BlockScoutWeb.AddressContractVerificationController do
     end
   end
 
-  defp proccess_metadata_add_publish(address_hash_string, verification_metadata, is_partial) do
+  defp proccess_metadata_add_publish(address_hash_string, verification_metadata, is_partial, conn \\ nil) do
     %{"params_to_publish" => params_to_publish, "abi" => abi, "secondary_sources" => secondary_sources} =
       parse_params_from_sourcify(address_hash_string, verification_metadata)
 
