@@ -248,7 +248,7 @@ defmodule BlockScoutWeb.API.RPC.ContractController do
   def getabi(conn, params) do
     with {:address_param, {:ok, address_param}} <- fetch_address(params),
          {:format, {:ok, address_hash}} <- to_address_hash(address_param),
-         {:contract, {:ok, contract}} <- to_smart_contract(address_hash) do
+         {:contract, {:ok, contract}} <- to_smart_contract(address_hash, address_param) do
       render(conn, :getabi, %{abi: contract.abi})
     else
       {:address_param, :error} ->
@@ -265,7 +265,7 @@ defmodule BlockScoutWeb.API.RPC.ContractController do
   def getsourcecode(conn, params) do
     with {:address_param, {:ok, address_param}} <- fetch_address(params),
          {:format, {:ok, address_hash}} <- to_address_hash(address_param) do
-      _ = VerificationController.check_and_verify(address_hash)
+      _ = VerificationController.check_and_verify(address_param)
       address = Chain.address_hash_to_address_with_source_code(address_hash)
 
       render(conn, :getsourcecode, %{
@@ -368,8 +368,8 @@ defmodule BlockScoutWeb.API.RPC.ContractController do
     {:format, Chain.string_to_address_hash(address_hash_string)}
   end
 
-  defp to_smart_contract(address_hash) do
-    _ = VerificationController.check_and_verify(address_hash)
+  defp to_smart_contract(address_hash, address_hash_string) do
+    _ = VerificationController.check_and_verify(address_hash_string)
 
     result =
       case Chain.address_hash_to_smart_contract(address_hash) do
