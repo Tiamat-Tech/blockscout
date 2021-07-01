@@ -5,7 +5,6 @@
 <% additional_sources_from_twin = Chain.get_address_verified_twin_contract(@address.hash).additional_sources %>
 <% full_verified = Chain.smart_contract_full_verified?(@address.hash)%>
 <% additional_sources = if smart_contract_verified, do: @address.smart_contract_additional_sources, else: additional_sources_from_twin %>
-<% full_verified %>
 <section class="container">
   <% is_proxy = BlockScoutWeb.AddressView.smart_contract_is_proxy?(@address) %>
 
@@ -39,7 +38,7 @@
           <% end %>
         <% end %>
         <%= if @address.smart_contract.verified_via_sourcify do %>
-          <a data-test="external_url" href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
+          <a data-test="external_url" fr=<%full_verified%> href=<%= sourcify_repo_url(@address.hash, @address.smart_contract.partial_verified) %> target="_blank">
             View contract in Sourcify repository <span class="external-token-icon"><%= render BlockScoutWeb.IconsView, "_external_link.html" %></span>
           </a>
         <% end %>
