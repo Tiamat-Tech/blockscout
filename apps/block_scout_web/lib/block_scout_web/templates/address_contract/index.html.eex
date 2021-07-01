@@ -3,6 +3,7 @@
 <% metadata_for_verification = minimal_proxy_template || Chain.get_address_verified_twin_contract(@address.hash).verified_contract %>
 <% smart_contract_verified = BlockScoutWeb.AddressView.smart_contract_verified?(@address) %>
 <% additional_sources_from_twin = Chain.get_address_verified_twin_contract(@address.hash).additional_sources %>
+<% full_verified = Chain.smart_contract_full_verified?(@address.hash)%>
 <% additional_sources = if smart_contract_verified, do: @address.smart_contract_additional_sources, else: additional_sources_from_twin %>
 
 <section class="container">
@@ -161,7 +162,7 @@
                       <%= gettext("Verify & Publish") %>
                     </div>
                   <% else %>
-                    <%= if !smart_contract_verified do %>
+                    <%= if !full_verified do %>
                       <% path = 
                         if Application.get_env(:explorer, Explorer.ThirdPartyIntegrations.Sourcify)[:enabled] do
                           address_verify_contract_path(@conn, :new, @address.hash)
