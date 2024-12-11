@@ -258,8 +258,7 @@ defmodule Explorer.Chain do
   defp common_where_limit_order(query, paging_options) do
     query
     |> InternalTransaction.where_is_different_from_parent_transaction()
-    # todo: replace `index_int_tx_desc_order` with `index_internal_transaction_desc_order` in the next line when new frontend is bound to `index_internal_transaction_desc_order` property
-    |> page_internal_transaction(paging_options, %{index_int_tx_desc_order: true})
+    |> page_internal_transaction(paging_options, %{index_internal_transaction_desc_order: true})
     |> limit(^paging_options.page_size)
     |> order_by(
       [it],
@@ -2836,6 +2835,24 @@ defmodule Explorer.Chain do
   def string_to_transaction_hash(_), do: :error
 
   @doc """
+  Constructs the base query `Ecto.Query.t()/0` to create requests to the transaction logs
+
+  ## Returns
+
+    * The query to the Log table with the joined associated transactions.
+
+  """
+  @spec log_with_transactions_query() :: Ecto.Query.t()
+  def log_with_transactions_query do
+    from(log in Log,
+      inner_join: transaction in Transaction,
+      on:
+        transaction.block_hash == log.block_hash and transaction.block_number == log.block_number and
+          transaction.hash == log.transaction_hash
+    )
+  end
+
+  @doc """
   Finds all `t:Explorer.Chain.Log.t/0`s for `t:Explorer.Chain.Transaction.t/0`.
 
   ## Options
@@ -2853,23 +2870,12 @@ defmodule Explorer.Chain do
     necessity_by_association = Keyword.get(options, :necessity_by_association, %{})
     paging_options = Keyword.get(options, :paging_options, @default_paging_options)
 
-    log_with_transactions =
-      from(log in Log,
-        inner_join: transaction in Transaction,
-        on:
-          transaction.block_hash == log.block_hash and transaction.block_number == log.block_number and
-            transaction.hash == log.transaction_hash
-      )
-
-    query =
-      log_with_transactions
-      |> where([_, transaction], transaction.hash == ^transaction_hash)
-      |> page_transaction_logs(paging_options)
-      |> limit(^paging_options.page_size)
-      |> order_by([log], asc: log.index)
-      |> join_associations(necessity_by_association)
-
-    query
+    log_with_transactions_query()
+    |> where([_, transaction], transaction.hash == ^transaction_hash)
+    |> page_transaction_logs(paging_options)
+    |> limit(^paging_options.page_size)
+    |> order_by([log], asc: log.index)
+    |> join_associations(necessity_by_association)
     |> select_repo(options).all()
   end
 
@@ -3429,17 +3435,9 @@ defmodule Explorer.Chain do
     where(query, [coin_balance], coin_balance.block_number < ^block_number)
   end
 
-  # todo: replace `index_int_tx_desc_order` with `index_internal_transaction_desc_order` in the next clause when new frontend is bound to `index_internal_transaction_desc_order` property
-  def page_internal_transaction(_, _, _ \\ %{index_int_tx_desc_order: false})
+  def page_internal_transaction(_, _, _ \\ %{index_internal_transaction_desc_order: false})
 
   def page_internal_transaction(query, %PagingOptions{key: nil}, _), do: query
-
-  # todo: keep next clause for compatibility with frontend and remove when new frontend is bound to `index_internal_transaction_desc_order` property
-  def page_internal_transaction(query, %PagingOptions{key: {block_number, transaction_index, index}}, %{
-        index_int_tx_desc_order: desc_order
-      }) do
-    hardcoded_where_for_page_internal_transaction(query, block_number, transaction_index, index, desc_order)
-  end
 
   def page_internal_transaction(query, %PagingOptions{key: {block_number, transaction_index, index}}, %{
         index_internal_transaction_desc_order: desc_order
@@ -3447,29 +3445,11 @@ defmodule Explorer.Chain do
     hardcoded_where_for_page_internal_transaction(query, block_number, transaction_index, index, desc_order)
   end
 
-  # todo: keep next clause for compatibility with frontend and remove when new frontend is bound to `index_internal_transaction_desc_order` property
-  def page_internal_transaction(query, %PagingOptions{key: {0}}, %{index_int_tx_desc_order: desc_order}) do
-    if desc_order do
-      query
-    else
-      where(query, [internal_transaction], internal_transaction.index > 0)
-    end
-  end
-
   def page_internal_transaction(query, %PagingOptions{key: {0}}, %{index_internal_transaction_desc_order: desc_order}) do
     if desc_order do
       query
     else
       where(query, [internal_transaction], internal_transaction.index > 0)
-    end
-  end
-
-  # todo: keep next clause for compatibility with frontend and remove when new frontend is bound to `index_internal_transaction_desc_order` property
-  def page_internal_transaction(query, %PagingOptions{key: {index}}, %{index_int_tx_desc_order: desc_order}) do
-    if desc_order do
-      where(query, [internal_transaction], internal_transaction.index < ^index)
-    else
-      where(query, [internal_transaction], internal_transaction.index > ^index)
     end
   end
 
